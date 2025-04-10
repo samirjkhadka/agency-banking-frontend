@@ -9,14 +9,14 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
-      //   if (!token) return navigate("/");
-      //   const res = await fetch("http://localhost:5000/api/transactions", {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   });
-      //   const data = await res.json();
-      //   setTransactions(data.transactions || []);
+      // if (!token) return navigate("/");
+      const res = await fetch("http://localhost:5000/api/transactions", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setTransactions(data.transactions || []);
     };
     fetchData();
   }, [navigate]);
@@ -66,7 +66,7 @@ const Dashboard = () => {
                 <td className="">{new Date(tx.date).toDateString()}</td>
                 <td className="">{tx.type}</td>
                 <td className="">NPR {tx.amount}</td>
-                <td className="">{tx.customerName} || 'N/A'</td>
+                <td className="">{tx.customerName || "N/A"}</td>
               </tr>
             ))}
           </tbody>
