@@ -1,11 +1,14 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
 const Login = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", token: "" });
   const navigate = useNavigate();
-  const [userId, setUserId] = useState(null);
+
+
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,49 +16,78 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-    const data = await response.json();
-    if (data.userId) {
-      setUserId(data.id);
-      navigate("/2fa", { state: { userId: data.userId } });
-    } else {
-      alert(data.message || "Login failed");
+    try {
+      const response = await api.post("/agent/login", form);
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+      setError(error.response?.data?.message || "Login Failed");
     }
   };
+
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-96"
-      >
-        <h2 className="text-xl font-bold mb-4 text-center">Agent Login</h2>
-        <input
-          type="email"
-          className="mb-3 p-2 w-full border"
-          onChange={handleChange}
-          placeholder="Email"
-          name="email"
-        />
-        <input
-          type="password"
-          className="mb-3 p-2 w-full border"
-          onChange={handleChange}
-          placeholder="Password"
-          name="password"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded w-full"
-        >
-          Login
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-lg">
+        <h2 className="text-2xl font-semibold text-center mb-4">Agent Login</h2>
+        {error && (
+          <div className="mb-4 p-2 text-sm bg-red-100 text-red-600 rounded text-center uppercase">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4 ">
+          <div className="">
+            <label htmlFor="" className="block text-sm font-medium">
+              Email
+            </label>
+            <input
+              type="email"
+              className="mt-1 block w-full p-2 border rounded-xl"
+              onChange={handleChange}
+              value={form.email}
+              placeholder="Email"
+              name="email"
+              required
+            />
+          </div>
+          <div className="">
+            <label htmlFor="" className="block text-sm font-medium">
+              Password
+            </label>
+            <input
+              type="password"
+              className="mt-1 block w-full p-2 border rounded-xl"
+              onChange={handleChange}
+              value={form.password}
+              placeholder="Password"
+              name="password"
+              required
+            />
+          </div>
+          <div className="">
+            <label htmlFor="" className="block text-sm font-medium">
+              OTP (Google Authenticator)
+            </label>
+            <input
+              type="text"
+              className="mt-1 block w-full p-2 border rounded-xl"
+              onChange={handleChange}
+              value={form.token}
+              placeholder="123456"
+              name="token"
+              required
+            />
+          </div>
+
+          
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 rounded w-full"
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

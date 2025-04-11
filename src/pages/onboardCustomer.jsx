@@ -1,110 +1,199 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import api from "../utils/api";
 
 const OnboardCustomer = () => {
-  const [form, setForm] = useState({});
-  const [photo, setPhoto] = useState(null);
+  const [form, setForm] = useState({
+    fullName: "",
+    // gender: "",
+    dob: "",
+    address: "",
+    phone: "",
+    idType: "",
+    id_Number: "",
+    id_document_base64: null,
+    photo_base64: null,
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+
+    if (files) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prev) => ({ ...prev, [name]: reader.result }));
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
+    setLoading(true);
+    setSuccess(false);
 
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    if (photo) formData.append("photo", photo);
-
-    const res = await fetch("http://localhost:5000/api/customers/onboard", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-    alert(data.message || "Submission complete");
+    try {
+      await api.post("/customer/onboard", form);
+      setSuccess(true);
+      setForm({
+        fullName: "",
+phone:"",
+        dob: "",
+        address: "",
+        idNumber: "",
+        idType: "",
+        id_document_base64: null,
+        photo_base64: null,
+      });
+    } catch (err) {
+      console.error("Onboarding failed:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow mt-6">
-      <h2 className="text-xl font-bold mb-4">Onboard Customer (KYC)</h2>
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <input
-          name="fullName"
-          placeholder="Full Name"
-          className="p-2 border"
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="phone"
-          placeholder="Phone Number"
-          className="p-2 border"
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          className="p-2 border"
-          onChange={handleChange}
-        />
-        <input
-          name="dob"
-          type="date"
-          className="p-2 border"
-          onChange={handleChange}
-          required
-        />
-     
-        <select name="idType" className="p-2 border" onChange={handleChange}>
-          <option value="">Select ID Type</option>
-          <option value="National ID">National ID</option>
-          <option value="Voter's Card">Voter's Card</option>
-          <option value="Driver's License">Driver's License</option>
-        </select>
-        <input
-          name="idNumber"
-          placeholder="ID Number"
-          className="p-2 border"
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="address"
-          placeholder="Residential Address"
-          className="p-2 border"
-          onChange={handleChange}
-          required
-        />
-       
-        <input
-          name="state"
-          placeholder="State"
-          className="p-2 border"
-          onChange={handleChange}
-        />
+    <div className="bg-white p-8 rounded-2xl shadow-md max-w-4xl mx-auto mt-6">
+      <h2 className="text-2xl font-bold text-blue-700 mb-6">
+        Customer Onboarding (KYC)
+      </h2>
 
+      {success && (
+        <div className="mb-4 p-3 rounded-md bg-green-100 text-green-700 border border-green-300">
+          ✅ Customer onboarded successfully!
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        {/* Full Name */}
         <div>
-          <label className="block mb-1">Passport Photo</label>
+          <label className="text-sm font-medium text-gray-700">Full Name</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPhoto(e.target.files[0])}
+            type="text"
+            name="fullName"
+            value={form.fullName}
+            onChange={handleChange}
+            required
+            className="mt-1 w-full rounded-xl border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        {/* pHone number */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            type="text"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            required
+            className="mt-1 w-full rounded-xl border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 px-4 rounded"
-        >
-          Submit KYC
-        </button>
+        {/* DOB */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">
+            Date of Birth
+          </label>
+          <input
+            type="date"
+            name="dob"
+            value={form.dob}
+            onChange={handleChange}
+            required
+            className="mt-1 w-full rounded-xl border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Address</label>
+          <input
+            type="text"
+            name="address"
+            value={form.address}
+            onChange={handleChange}
+            required
+            className="mt-1 w-full rounded-xl border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        {/* ID Type */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">ID Type</label>
+          <select
+            name="idType"
+            value={form.idType}
+            onChange={handleChange}
+            required
+            className="mt-1 w-full rounded-xl border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Select ID Type</option>
+            <option value="voter">Voter’s Card</option>
+            <option value="driver">Driver’s License</option>
+            <option value="national">National ID</option>
+          </select>
+        </div>
+        {/* Id No */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Id No</label>
+          <input
+            type="text"
+            name="idNumber"
+            value={form.idNumber}
+            onChange={handleChange}
+            required
+            className="mt-1 w-full rounded-xl border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        {/* ID Image */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">
+            Upload ID Image
+          </label>
+          <input
+            type="file"
+            name="id_document_base64"
+            accept="image/*"
+            onChange={handleChange}
+            required
+            className="mt-1 w-full text-sm text-gray-700"
+          />
+        </div>
+
+        {/* Customer Photo */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">
+            Upload Customer Photo
+          </label>
+          <input
+            type="file"
+            name="photo_base64"
+            accept="image/*"
+            onChange={handleChange}
+            required
+            className="mt-1 w-full text-sm text-gray-700"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div className="col-span-1 md:col-span-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-xl transition duration-200"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        </div>
       </form>
     </div>
   );
