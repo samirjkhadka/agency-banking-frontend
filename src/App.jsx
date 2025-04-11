@@ -17,45 +17,19 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/2fa" element={<TwoFA />} />
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <PrivateRoute>
-              <Layout>
-                <Dashboard />
-              </Layout>
+              <Layout />
             </PrivateRoute>
           }
-        />
-        <Route
-          path="/onboard"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <OnboardCustomer />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/transactions"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <Transactions />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/reports"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <Reports />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/onboard" element={<OnboardCustomer />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/reports" element={<Reports />} />
+        </Route>
+
         {/* <Route path="/onboard" element={<OnboardCustomer />} />
         <Route path="/register" element={<RegisterAgent />} />
         <Route path="/login" element={<LoginAgent />} /> */}
