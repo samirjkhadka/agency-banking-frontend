@@ -75,6 +75,10 @@ const Layout = () => {
             <Menu size={24} />
           </button>
           <h1 className="text-lg font-semibold text-blue-700">Agent Portal</h1>
+          <button onClick={() => {
+              localStorage.removeItem("token");
+              window.location.href = "/";
+            }} className="text-red-600 text-sm hover:underline">Logout</button>
         </div>
 
         {/* Actual page content */}

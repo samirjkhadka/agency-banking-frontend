@@ -9,6 +9,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import Layout from "./components/Layout";
 import Transactions from "./pages/Transactions";
 import Reports from "./pages/Reports";
+import BillPayment from "./pages/BillPayment";
+import Receiptpage from "./pages/Receiptpage";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/onboard" element={<OnboardCustomer />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/bill-payments" element={<BillPayment />} />
+          <Route path="/receipt/:id" element={<Receiptpage />} />
           <Route path="/reports" element={<Reports />} />
         </Route>
 
