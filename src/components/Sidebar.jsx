@@ -30,7 +30,9 @@ const Sidebar = ({ open, setOpen }) => {
           <Link to="/onboard" className="block text-gray-700 hover:text-blue-600">Onboard Customer</Link>
           <Link to="/transactions" className="block text-gray-700 hover:text-blue-600">Transactions</Link>
           <Link to="/bill-payments" className="block text-gray-700 hover:text-blue-600">Bill Payments</Link>
-          <Link to="/analytics" className="block text-gray-700 hover:text-blue-600">Analytics</Link>
+          <Link to="/reports" className="block text-gray-700 hover:text-blue-600">Analytics</Link>
+          <Link to="/testreports" className="block text-gray-700 hover:text-blue-600">Test Report</Link>
+          <Link to="/agent-reports" className="block text-gray-700 hover:text-blue-600">Agent Report</Link>
         </nav>
       </div>
     </>

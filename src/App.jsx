@@ -11,6 +11,8 @@ import Transactions from "./pages/Transactions";
 import Reports from "./pages/Reports";
 import BillPayment from "./pages/BillPayment";
 import Receiptpage from "./pages/Receiptpage";
+import TransactionReport from "./pages/TransactionReport";
+import AgentReport from "./pages/AgentReport";
 
 function App() {
   return (
@@ -31,7 +33,9 @@ function App() {
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/bill-payments" element={<BillPayment />} />
           <Route path="/receipt/:id" element={<Receiptpage />} />
-          <Route path="/reports" element={<Reports />} />
+          <Route path="/reports" element={<TransactionReport />} />
+          <Route path="/testreports" element={<Reports />} />
+          <Route path="/agent-reports" element={<AgentReport />} />
         </Route>
 
         {/* <Route path="/onboard" element={<OnboardCustomer />} />
